@@ -4,18 +4,19 @@ import kotlinx.coroutines.channels.produce
 
 const val THREE_SECONDS_IN_MILLISECONDS = 3000L
 const val ENDPOINT = "http://0.0.0.0:8080/"
+const val NUMBER_CHARACTERS = 10
 
 fun main() {
     println("Started outside of runBlocking")
     runBlocking {
         println("Started inside in runBlocking")
         val characterChannel = pollForCharacters()
-        repeat(2) {
+        repeat(NUMBER_CHARACTERS) {
             println(characterChannel.receive())
         }
         characterChannel.cancel(CancellationException("Not more characters are needed"))
         if (!characterChannel.isClosedForReceive) {
-            repeat(2) {
+            repeat(NUMBER_CHARACTERS) {
                 println(characterChannel.receive())
             }
         }
