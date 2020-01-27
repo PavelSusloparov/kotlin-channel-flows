@@ -3,11 +3,11 @@ import kotlinx.coroutines.runBlocking
 
 fun main() {
     val primeFlow: Flow<Int> = oneThousandPrimes.asFlow()
-//    runBlocking {
-//        primeFlow.collect { primeNumber ->
-//            println(primeNumber)
-//        }
-//    }
+    runBlocking {
+        primeFlow.collect { primeNumber ->
+            println(primeNumber)
+        }
+    }
 }
 
 val oneThousandPrimes = generateSequence(3) { value -> value + 1 }

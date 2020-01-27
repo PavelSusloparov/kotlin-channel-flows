@@ -19,6 +19,6 @@ fun main() {
     val numberChannel = Channel<Int>()
     runBlocking {
         launch { sendNumbers(numberChannel) }
-        launch {printNumbers(numberChannel) }
+        launch { printNumbers(numberChannel) }
     }
 }

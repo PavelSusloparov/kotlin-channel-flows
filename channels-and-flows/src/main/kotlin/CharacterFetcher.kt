@@ -1,23 +1,28 @@
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
-import java.net.URL
 
+const val THREE_SECONDS_IN_MILLISECONDS = 3000L
 const val ENDPOINT = "http://0.0.0.0:8080/"
-const val TEN_SECONDS_IN_MILLISECONDS = 10000L
 
 fun main() {
+    println("Started outside of runBlocking")
     runBlocking {
-        println("Started")
+        println("Started inside in runBlocking")
         val characterChannel = pollForCharacters()
-        repeat(10) {
+        repeat(2) {
             println(characterChannel.receive())
         }
-        launch {
-            println(fetchCharacter())
+        characterChannel.cancel(CancellationException("Not more characters are needed"))
+        if (!characterChannel.isClosedForReceive) {
+            repeat(2) {
+                println(characterChannel.receive())
+            }
         }
-        println("Finished")
+
+        println("Finished inside in runBlocking")
     }
+    print("Finished outside of runBlocking")
 }
 
 @ExperimentalCoroutinesApi
@@ -26,10 +31,10 @@ suspend fun CoroutineScope.pollForCharacters(): ReceiveChannel<String> =
         while (true) {
             val character = fetchCharacter()
             send(character)
-            delay(TEN_SECONDS_IN_MILLISECONDS)
+            delay(THREE_SECONDS_IN_MILLISECONDS)
         }
     }
 
 suspend fun fetchCharacter(): String = withContext(Dispatchers.IO) {
-    URL(ENDPOINT).readText()
+    khttp.get(ENDPOINT).text
 }

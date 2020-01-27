@@ -1,5 +1,3 @@
-package com.bignerdranch
-
 import java.io.File
 
 private const val DICE_SIDES_COUNT = 6
