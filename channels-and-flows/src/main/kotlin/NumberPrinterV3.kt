@@ -1,25 +1,48 @@
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-suspend fun printNumbersCoroutineScopeV3() {
+suspend fun handleItem(number: Int, innerNumber: Int) {
     try {
         coroutineScope {
-            for (number in 0..9) {
-                println(number)
-                if (number == 3)
-                    throw Exception("printNumbersV3: Coroutine #3")
-                }
+            delay(1000)
+            println("handleItem $number-$innerNumber")
+            if (number == 1 && innerNumber == 13) {
+                throw Exception("number is 1 && innerNumber is 13")
+            }
         }
     } catch (e: Exception) {
-        println("Exception in the main(): $e")
+        println("handleItem exception: $e")
+    }
+}
+
+suspend fun handlePage(number: Int) {
+    try {
+        coroutineScope {
+            delay(1000)
+            if (number == 2) {
+                throw Exception("number is 2")
+            }
+            for (innerNumber in 10..15) {
+                launch {
+                    handleItem(number, innerNumber)
+                }
+            }
+            println("handlePage $number")
+        }
+    } catch (e: Exception) {
+        println("handlePage exception: $e")
     }
 }
 
 fun main() {
     runBlocking {
-        launch {
-            printNumbersCoroutineScopeV3()
+        for (number in 0..2) {
+            launch {
+                handlePage(number)
+            }
         }
+        println("helloWorld after")
     }
 }
